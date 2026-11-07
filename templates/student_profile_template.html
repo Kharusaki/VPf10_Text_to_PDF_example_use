@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Анкета ученика — {{ student_name }}</title>
+  <style>
+    /* Минимальный «белый лист», без дизайна — только чтобы PDF читался */
+    body { font-family: sans-serif; font-size: 12pt; margin: 40px; }
+    h1 { font-size: 18pt; border-bottom: 1px solid #000; padding-bottom: 6px; }
+    .meta { color: #555; font-size: 10pt; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    td { padding: 8px 6px; vertical-align: top; border-bottom: 1px solid #ddd; }
+    td.label { width: 35%; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>Анкета ученика</h1>
+  <div class="meta">
+    Дата формирования: {{ report_date }}<br>
+    Источник: {{ source_file }}
+  </div>
+
+  <table>
+    <tr><td class="label">Имя ученика</td><td>{{ student_name }}</td></tr>
+    <tr><td class="label">Возраст / класс</td><td>{{ age_or_grade }}</td></tr>
+    <tr><td class="label">Текущий уровень английского</td><td>{{ current_level }}</td></tr>
+    <tr><td class="label">Цель обучения</td><td>{{ learning_goal }}</td></tr>
+    <tr><td class="label">Удобное расписание</td><td>{{ preferred_schedule }}</td></tr>
+    <tr><td class="label">Предпочитаемый формат</td><td>{{ format_preference }}</td></tr>
+    <tr><td class="label">Предыдущий опыт</td><td>{{ previous_experience }}</td></tr>
+    <tr><td class="label">Особые пожелания</td><td>{{ special_notes }}</td></tr>
+    <tr><td class="label">Контакты</td><td>{{ contact_info }}</td></tr>
+    <tr><td class="label">Следующие шаги</td><td>{{ next_steps }}</td></tr>
+  </table>
+
+</body>
+</html>
