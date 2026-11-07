@@ -5,9 +5,13 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template_string, request, send_file
 
-from utils.ai_processor import process_dialog_with_ai
+from utils.ai_processor import (
+    process_dialog_with_ai,
+    process_lesson_feedback_with_ai,
+)
 from utils.input_loader import load_dialog
 from utils.pdf_generator import generate_pdf
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 INPUT_DIR = PROJECT_ROOT / "input"
@@ -17,10 +21,17 @@ logger = logging.getLogger("flask_app")
 
 # Доступные типы отчётов → имена шаблонов
 REPORT_TYPES = {
-    "profile": "student_profile_template.html",
-    "feedback": "lesson_feedback_template.html",
+    "profile": {
+        "template": "student_profile_template.html",
+        "prefix": "student_profile",
+        "processor": process_dialog_with_ai,
+    },
+    "feedback": {
+        "template": "lesson_feedback_template.html",
+        "prefix": "lesson_feedback",
+        "processor": process_lesson_feedback_with_ai,
+    },
 }
-
 INDEX_HTML = """
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><title>AI Client Report Generator</title></head>
@@ -85,9 +96,14 @@ def _handle_generation(payload: dict):
     try:
         logger.info("Генерация: %s, тип=%s", filename, report_type)
         dialog_text = load_dialog(path)
-        data = process_dialog_with_ai(dialog_text)
+        config = REPORT_TYPES[report_type]
+        data = config["processor"](dialog_text)
         data["source_file"] = path.name
-        pdf_path = generate_pdf(data, template_name=REPORT_TYPES[report_type])
+        pdf_path = generate_pdf(
+            data,
+            template_name=config["template"],
+            filename_prefix=config["prefix"],
+        )
         logger.info("Готово: %s", pdf_path.name)
         return jsonify({"ok": True, "pdf_path": str(pdf_path)})
     except Exception as exc:

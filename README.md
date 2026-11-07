@@ -16,6 +16,17 @@ HTML-шаблон (Jinja2) → PDF (WeasyPrint) → `reports/`.
 - При ошибке ИИ (сеть, ключ, формат) — не падает, а отдаёт мок-ответ, чтобы пайплайн завершился.
 - Есть локальный Flask-сервер для генерации через форму/API.
 
+## Быстрый старт
+
+```bash
+# 1. Установить зависимости (см. раздел «Установка» ниже)
+pip install -r requirements.txt
+
+# 2. Скопировать .env.example → .env, при необходимости вписать ключ
+
+# 3. Сгенерировать оба типа отчётов для всех файлов из input/
+python main.py --report all
+
 ## Структура проекта
 .
 ├── main.py # CLI: запуск пайплайна
@@ -73,6 +84,20 @@ python main.py --report all
 PDF появятся в reports/ с именами вида:
 student_profile_dialog_clean_txt_2025-11-13_02-30-15.pdf
 
+### Комбинации источника и типа отчёта
+
+| Команда | Что делает |
+|---|---|
+| `python main.py` | все файлы из `input/` × только `profile` |
+| `python main.py --report feedback` | все файлы × только `feedback` |
+| `python main.py --report all` | все файлы × оба типа (N файлов × 2 PDF) |
+| `python main.py input/dialog_bot.json` | один файл × `profile` (по умолчанию) |
+| `python main.py input/dialog_bot.json --report feedback` | один файл × `feedback` |
+| `python main.py input/dialog_bot.json --report all` | один файл × оба типа (2 PDF) |
+
+Полная справка: `python main.py --help`.
+
+
 ### Запуск (Flask)
 bash
 python app.py
@@ -107,3 +132,4 @@ input_loader.py приводит оба формата к единому вид�
 - Шаблоны намеренно без дизайна (белый лист + таблица) — фокус на пайплайне, не на вёрстке.
 - Flask-сервер локальный (127.0.0.1), без авторизации — не предназначен для публичного размещения.
 - Мок-ответы статичны и не зависят от входного текста (по дизайну, для демо без ИИ).
+
